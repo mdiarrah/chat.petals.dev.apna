@@ -1,0 +1,6 @@
+FROM hive-chat-private:latest
+
+#COPY chat.petals.dev/ /home/petals/chat.petals.dev/
+WORKDIR /home/petals/chat.petals.dev
+
+CMD ["flask", "run","--host","0.0.0.0","--port","8282"]

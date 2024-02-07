@@ -1,11 +1,19 @@
 const models = {
-  "tiiuae/falcon-180B-chat": {
-    modelCard: "https://huggingface.co/tiiuae/falcon-180B-chat",
-    license: "https://huggingface.co/spaces/tiiuae/falcon-180b-license/blob/main/LICENSE.txt",
-    maxSessionLength: 8192,
-    sepToken: "\n",
-    stopToken: "\n",
-    extraStopSequences: ["<|endoftext|>", "\nFalcon:", " Falcon:", "\nUser:", " User:", "###"],
+  "mistralai/Mistral-7B-v0.1": {
+    modelCard: "https://huggingface.co/mistralai/Mistral-7B-v0.1",
+    license: "https://huggingface.co/mistralai/Mistral-7B-v0.1/tree/main",
+    maxSessionLength: 2048,
+    sepToken: "###",
+    stopToken: "###",
+    extraStopSequences: ["</s>"],
+  },
+  "huggyllama/llama-7b": {
+    modelCard: "https://huggingface.co/huggyllama/llama-7b",
+    license: "https://huggingface.co/huggyllama/llama-7b/blob/main/LICENSE",
+    maxSessionLength: 2048,
+    sepToken: "###",
+    stopToken: "###",
+    extraStopSequences: ["</s>"],
   },
   "stabilityai/StableBeluga2": {
     modelCard: "https://huggingface.co/stabilityai/StableBeluga2",
@@ -49,18 +57,12 @@ const models = {
   },
 };
 const falconModel = "tiiuae/falcon-180B-chat";
-var curModel = "stabilityai/StableBeluga2";
+var curModel = "mistralai/Mistral-7B-v0.1"; //"stabilityai/StableBeluga2";
 
 const generationParams = {
   do_sample: 1,
-  temperature: 0.6,
-  top_p: 0.9,
-};
-const falconGenerationParams = {
-  do_sample: 1,
-  temperature: 0.75,
-  top_p: 0.9,
-  repetition_penalty: 1.2,
+  temperature: 0.9,
+  top_p: 0.6,
 };
 
 var ws = null;
@@ -119,10 +121,12 @@ function sendReplica() {
     const aiPrompt = (curRegime === Regime.CHATBOT) ? 'Assistant:' : '';
     $('.human-replica:last').text($('.human-replica:last textarea').val());
     $('.dialogue').append($(
+      '<div class="route-box" style="display: none;"></div><br>' +
       '<p class="ai-replica">' +
         `<span class="text">${aiPrompt}</span>` +
         '<span class="loading-animation"></span>' +
         '<span class="speed" style="display: none;"></span>' +
+        '<span class="elapsed" style="display: none;"></span>' +
         '<span class="generation-controls"><a class="stop-generation" href=#>stop generation</a></span>' +
         '<span class="suggest-join" style="display: none;">' +
           '<b>Too slow?</b> ' +
@@ -145,7 +149,7 @@ function sendReplica() {
     return;
   }
 
-  const replicaDivs = $('.human-replica, .ai-replica .text');
+  const replicaDivs = $('.human-replica, .ai-replica, .response-times, .text');
   var replicas = [];
   for (var i = position; i < replicaDivs.length; i++) {
     const el = $(replicaDivs[i]);
@@ -174,14 +178,27 @@ function sendReplica() {
   receiveReplica(inputs);
 }
 
+
+// Function to display response time
+function displayResponseTime(time) {
+  console.log("Response time:", time); 
+  const responseTimesDiv = document.getElementById('response-times');
+  const responseTimeElement = document.createElement('p');
+  responseTimeElement.textContent = `Response Time: ${time.toFixed(2)} ms`;
+  responseTimesDiv.appendChild(responseTimeElement);
+}
+
 function receiveReplica(inputs) {
+  // Add this line to record the start time
+  const requestStartTime = performance.now();
+
   ws.send(JSON.stringify({
     type: "generate",
     inputs: inputs,
-    max_new_tokens: 1,
+    max_new_tokens: 40,
     stop_sequence: models[curModel].stopToken,
     extra_stop_sequences: models[curModel].extraStopSequences,
-    ...(curModel === falconModel ? falconGenerationParams : generationParams)
+    ...generationParams
   }));
 
   var lastMessageTime = null;
@@ -194,6 +211,14 @@ function receiveReplica(inputs) {
       return;
     }
 
+    // Calculate the response time
+    const responseTime = performance.now() - requestStartTime;
+    const elapsedSec = responseTime / 1000;
+        $('.elapsed')
+        .text(`Elapsed: ${elapsedSec.toFixed(1)} sec`)
+        .show();
+   
+
     if (lastMessageTime != null) {
       totalElapsed += performance.now() - lastMessageTime;
       tokenCount += response.token_count;
@@ -202,9 +227,8 @@ function receiveReplica(inputs) {
 
     const lastReplica = $('.ai-replica .text').last();
     var newText = lastReplica.text() + response.outputs;
-    if (curModel !== falconModel) {
-      newText = newText.replace(models[curModel].stopToken, "");
-    }
+    newText = newText.replace(models[curModel].stopToken, "");
+    var routeMap = response.route;
     if (models[curModel].extraStopSequences !== null) {
       for (const seq of models[curModel].extraStopSequences) {
         newText = newText.replace(seq, "");
@@ -212,12 +236,57 @@ function receiveReplica(inputs) {
     }
     lastReplica.text(newText);
 
+    const jsonObj = JSON.parse(routeMap);
+           // Create an unordered list
+           const ul = $('<ul>');
+          
+           // Iterate through the object's properties
+           $.each(jsonObj, function(key, value) {
+               // Create list items with bullets
+               const li = $('<li>').html(`Blocks<strong> [${key}]:</strong> via <strong>${value}</strong>`);
+               
+               // Append list items to the unordered list
+               ul.append(li);
+           });
+           
+           // Show the parsed data and list with bullets in your HTML elements
+         const routeInfo =$('<div>').html(`<i class="fas fa-info-circle"></i> <strong>Found Inference Path --&gt </strong><br><span class="route-message"></span>`)
+         //$('.route-message').html(ul).show();
+         //$('.route-message').text(routeMap).show();
+         routeInfo.find('.route-message').append(ul);
+         //$('.route-box').html(routeInfo).show();
+
     if (!response.stop && !forceStop) {
       if (tokenCount >= 1) {
         const speed = tokenCount / (totalElapsed / 1000);
+        const elapsedSec = totalElapsed / 1000;
         $('.speed')
           .text(`Speed: ${speed.toFixed(1)} tokens/sec`)
           .show();
+
+          const jsonObj = JSON.parse(routeMap);
+           // Create an unordered list
+           const ul = $('<ul>');
+          
+           // Iterate through the object's properties
+           $.each(jsonObj, function(key, value) {
+               // Create list items with bullets
+               const li = $('<li>').html(`Blocks<strong> [${key}]:</strong> via <strong>${value}</strong>`);
+               
+               // Append list items to the unordered list
+               ul.append(li);
+           });
+           
+           // Show the parsed data and list with bullets in your HTML elements
+         const routeInfo =$('<div>').html(`<i class="fas fa-info-circle"></i> <strong>Found Inference Path --&gt </strong><br><span class="route-message"></span>`)
+         //$('.route-message').html(ul).show();
+         //$('.route-message').text(routeMap).show();
+         routeInfo.find('.route-message').append(ul);
+         $('.route-box').html(routeInfo).show();
+
+        $('.elapsed')
+        .text(`Elapsed: ${elapsedSec.toFixed(1)} sec`)
+        .show();
         if (speed < 1) {
           $('.suggest-join').show();
         }
@@ -227,8 +296,18 @@ function receiveReplica(inputs) {
         resetSession();
         forceStop = false;
       }
-      $('.loading-animation, .speed, .suggest-join, .generation-controls').remove();
+      //if (tokenCount >= 1) {
+        //const speed = tokenCount / (totalElapsed / 1000);
+        
+        //if (speed < 1) {
+        //  $('.suggest-join').show();
+       // }
+      //}
+      //$('.loading-animation, .speed, .suggest-join, .generation-controls').remove();
+      $('.loading-animation, .speed, .generation-controls, .suggest-join').remove()
+
       appendTextArea();
+
     }
   };
 }
@@ -239,16 +318,16 @@ function handleFailure(message, autoRetry = false) {
     // Show the error and the retry button only if a user is waiting for the generation results
 
     if (message === "Connection failed" && !connFailureBefore) {
-      autoRetry = true;
+      //autoRetry = true;
       connFailureBefore = true;
     }
     if (/Session .+ expired/.test(message)) {
-      autoRetry = true;
+      //autoRetry = true;
     }
     if (/Maximum length exceeded/.test(message) && sessionLength < models[curModel].maxSessionLength) {
       // We gradually increase sessionLength to save server resources. Default: 512 -> 2048 -> 8192 (if supported)
       sessionLength = Math.min(sessionLength * 4, models[curModel].maxSessionLength);
-      autoRetry = true;
+      //autoRetry = true;
     }
 
     if (autoRetry) {
@@ -262,7 +341,8 @@ function handleFailure(message, autoRetry = false) {
         $('.out-of-capacity').hide();
         $('.error-message').text(message).show();
       }
-      $('.error-box').show();
+      //$('.error-box').show();
+      appendTextArea();
     }
   }
 }
