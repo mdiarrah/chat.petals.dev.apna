@@ -73,26 +73,26 @@
               <div class="mt-2">
                 <label class="group-label">Family:</label>
                 <div class="btn-group family-selector" role="group">
-                  <input type="radio" class="btn-check" name="family" value="mistral" id="family-mistral" checked>
-                  <label class="btn btn-outline-primary" for="family-mistral">Mistral</label>
+                  <!--<input type="radio" class="btn-check" name="family" value="mistral" id="family-mistral" checked>
+                  <label class="btn btn-outline-primary" for="family-mistral">Mistral</label>-->
 
-                 <!-- <input type="radio" class="btn-check" name="family" value="llama" id="family-llama">
-                  <label class="btn btn-outline-primary" for="family-llama">Llama</label>-->
+                  <input type="radio" class="btn-check" name="family" value="llama" id="family-llama" checked>
+                  <label class="btn btn-outline-primary" for="family-llama">Llama</label>
     
                 </div> 
               </div>
               <div class="mt-2">
                 <label class="group-label">Model:</label>
                 
-                <div class="model-selector btn-group" role="group" data-family="mistral" >
+                <!--<div class="model-selector btn-group" role="group" data-family="mistral" >
                   <input type="radio" class="btn-check" name="model" value="mistralai/Mistral-7B-v0.1" id="mistral-7b-hf" checked>
                   <label class="btn btn-outline-primary" for="mistral-7b-hf">Mistral-7B</label>
-                </div>
-
-                <!--<div class="model-selector btn-group" role="group" data-family="llama" style="display: none;">
-                  <input type="radio" class="btn-check" name="model" value="huggyllama/llama-65b" id="model-llama-65b-hf">
-                  <label class="btn btn-outline-primary" for="model-llama-65b-hf">Llama-65B</label>
                 </div>-->
+
+                <div class="model-selector btn-group" role="group" data-family="llama">
+                  <input type="radio" class="btn-check" name="model" value="huggyllama/llama-65b" id="model-llama-65b-hf" checked>
+                  <label class="btn btn-outline-primary" for="model-llama-65b-hf">Llama-65B</label>
+                </div>
 
               </div>
             </form>
