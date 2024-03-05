@@ -314,7 +314,7 @@ def load_documents(source_dir: str) -> list[Document]:
                 contents, _ = future.result()
                 docs.extend(contents)
             except Exception as e:
-                logger.warning(f"ignoring a malformed file, filename: {future.args[0]}, err: {e}")
+                logger.warning(f"ignoring a malformed file, filename: {future.exception().args[0]}, err: {e}")
                 continue
 
     return docs
