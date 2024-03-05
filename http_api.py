@@ -274,7 +274,11 @@ def load_single_document(file_path: str) -> Document:
             
     else:
         raise ValueError("Document type is undefined")
-    return loader.load()[0]
+    try: 
+        return loader.load()[0]
+    except Exception as e:
+        logger.warning(f"ignoring a malformed file, filename: {file_path}, err: {e}")
+        raise(e)
 
 
 def load_document_batch(filepaths):
