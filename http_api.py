@@ -266,7 +266,12 @@ def load_single_document(file_path: str) -> Document:
     file_extension = os.path.splitext(file_path)[1]
     loader_class = DOCUMENT_MAP.get(file_extension)
     if loader_class:
-        loader = loader_class(file_path)
+        try:
+            loader = loader_class(file_path)
+        except Exception as e:
+            logger.warning(f"ignoring a malformed file, filename: {file_path}, err: {e}")
+            raise(e)
+            
     else:
         raise ValueError("Document type is undefined")
     return loader.load()[0]
