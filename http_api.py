@@ -310,8 +310,12 @@ def load_documents(source_dir: str) -> list[Document]:
         # process all results
         for future in as_completed(futures):
             # open the file and load the data
-            contents, _ = future.result()
-            docs.extend(contents)
+            try:
+                contents, _ = future.result()
+                docs.extend(contents)
+            except Exception as e:
+                logger.warning(f"ignoring a malformed file, filename: {future.args[0]}, err: {e}")
+                continue
 
     return docs
 
