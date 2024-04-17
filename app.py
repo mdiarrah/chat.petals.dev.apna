@@ -96,7 +96,7 @@ access_token = "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"
 models = {}
 for model_info in config.MODELS:
     logger.info(f"Loading tokenizer for {model_info.repo}")
-    tokenizer = AutoTokenizer.from_pretrained(model_info.repo, add_bos_token=False, use_fast=True,token=access_token,)
+    tokenizer = AutoTokenizer.from_pretrained(model_info.repo, add_bos_token=False, use_fast=True,token=config.HF_ACCESS_TOKEN,)
 
     logger.info(f"Loading model {model_info.repo} with adapter {model_info.adapter} and dtype {config.TORCH_DTYPE}")
     # We set use_fast=False since LlamaTokenizerFast takes a long time to init

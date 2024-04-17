@@ -15,7 +15,7 @@ class ModelInfo:
 
 MODELS = [
     #ModelInfo(repo="petals-team/StableBeluga2", name="stabilityai/StableBeluga2"),
-    #ModelInfo(repo="meta-llama/Llama-2-70b-chat-hf"),
+    ModelInfo(repo="meta-llama/Llama-2-70b-chat-hf"),
     #ModelInfo(repo="huggyllama/llama-65b"),
     #ModelInfo(repo="huggyllama/llama-65b", adapter="timdettmers/guanaco-65b"),
     ModelInfo(repo="mistralai/Mistral-7B-v0.1"),
@@ -24,6 +24,7 @@ MODELS = [
     #ModelInfo(repo="bigscience/bloomz"),
 ]
 DEFAULT_MODEL_NAME = "mistralai/Mistral-7B-v0.1"
+HF_ACCESS_TOKEN = "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"
 #DEFAULT_MODEL_NAME = "tiiuae/falcon-180B-chat"
 
 #INITIAL_PEERS = PUBLIC_INITIAL_PEERS
