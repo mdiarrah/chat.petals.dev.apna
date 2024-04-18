@@ -57,7 +57,7 @@ const models = {
   },
 };
 const falconModel = "tiiuae/falcon-180B-chat";
-var curModel = "mistralai/Mistral-7B-v0.1"; //"stabilityai/StableBeluga2";
+var curModel = "meta-llama/Llama-2-70b-chat-hf"; //"stabilityai/StableBeluga2";
 
 const generationParams = {
   do_sample: 1,
