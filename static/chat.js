@@ -31,6 +31,14 @@ const models = {
     stopToken: "###",
     extraStopSequences: ["</s>"],
   },
+  "meta-llama/Llama-2-70b-hf": {
+    modelCard: "https://huggingface.co/meta-llama/Llama-2-70b-hf",
+    license: "https://bit.ly/llama2-license",
+    maxSessionLength: 8192,
+    sepToken: "###",
+    stopToken: "###",
+    extraStopSequences: ["</s>"],
+  },
   "timdettmers/guanaco-65b": {
     modelCard: "https://huggingface.co/timdettmers/guanaco-65b",
     license: "https://huggingface.co/timdettmers/guanaco-65b",
