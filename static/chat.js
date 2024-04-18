@@ -55,6 +55,7 @@ function sendReplica() {
     const aiPrompt = "Assistant:";
     $('.human-replica:last').text($('.human-replica:last textarea').val());
     $('.dialogue').append($(
+      '<div class="route-box" style="display: none;"></div><br>' +
       '<p class="ai-replica">' +
         `<span class="text">${aiPrompt}</span>` +
         '<span class="loading-animation"></span>' +
@@ -138,6 +139,7 @@ function receiveReplica(inputs) {
 
     const lastReplica = $('.ai-replica .text').last();
     var newText = lastReplica.text() + response.outputs;
+    var routeMap = response.route;
     if (curModel !== falconModel) {
       newText = newText.replace(getConfig().chat.stop_token, "");
     }
@@ -154,6 +156,30 @@ function receiveReplica(inputs) {
         $('.speed')
           .text(`Speed: ${speed.toFixed(1)} tokens/sec`)
           .show();
+        
+          const jsonObj = JSON.parse(routeMap);
+
+          // Create an unordered list
+          const ul = $('<ul>');
+          
+          // Iterate through the object's properties
+          $.each(jsonObj, function(key, value) {
+              // Create list items with bullets
+              const li = $('<li>').html(`Blocks<strong> [${key}]:</strong> via <strong>${value}</strong>`);
+              
+              // Append list items to the unordered list
+              ul.append(li);
+          });
+          
+          // Show the parsed data and list with bullets in your HTML elements
+        const routeInfo =$('<div>').html(`<i class="fas fa-info-circle"></i> <strong>Found Inference Path --&gt </strong><br><span class="route-message"></span>`)
+        //$('.route-message').html(ul).show();
+        //$('.route-message').text(routeMap).show();
+        routeInfo.find('.route-message').append(ul);
+        $('.route-box').html(routeInfo).show();
+        //$('.route')
+        //  .text(`Route: ${routeMap}`)
+        //  .show();
         if (speed < 1) {
           $('.suggest-join').show();
         }
@@ -164,6 +190,8 @@ function receiveReplica(inputs) {
         forceStop = false;
       }
       $('.loading-animation, .speed, .suggest-join, .generation-controls').remove();
+      //$('.dialogue2').show()
+      //$('.route-box').hide();
       appendTextArea();
     }
   };

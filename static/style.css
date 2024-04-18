@@ -1,6 +1,13 @@
 .container {
   max-width: 960px;
 }
+.dark-mode {
+  background-color: black;
+  /*color: white;*/
+}
+.white-color {
+  color: white;
+}
 
 /*
  * Custom translucent site header
@@ -143,7 +150,7 @@ main p {
   word-wrap: break-word;
 }
 
-.human-replica, .ai-replica, .error-message {
+.human-replica, .ai-replica, .error-message, .route-message {
   white-space: pre-wrap;
 }
 
@@ -172,10 +179,10 @@ main p {
 }
 
 .ai-replica {
-  background-color: #fff7f7;
+  background-color: #f0f3cc;
 }
 
-.speed, .generation-controls, .suggest-join {
+.speed, .generation-controls, .suggest-join, .elapsed, .route {
   display: block;
   color: #999;
   font-size: 9pt;
@@ -188,7 +195,7 @@ main p {
 }
 
 .welcome {
-  background-color: #fff7f7;
+  background-color: #f0f3cc; /*#fff7f7;*/
   margin-left: auto;
   margin-right: 0;
   max-width: 400px;
@@ -243,7 +250,7 @@ main p {
   word-wrap: break-word;
 }
 
-.error-message {
+.error-message, .route-message {
   font-family: monospace;
   font-size: 8pt;
 }
@@ -254,4 +261,21 @@ main p {
 
 .reset-btn {
   font-size: 9pt;
+}
+
+.route-box {
+  border: 1px solid #757373;
+  border-radius: 10px;
+  padding: 10px 15px;
+  width: 90%;
+  max-width: 330px;
+  text-align: left;
+  word-wrap: break-word;
+  font-size: 8pt;
+  background-color: rgb(184, 195, 196);
+  margin-left: auto;
+  margin-right: 0;
+  word-wrap: break-word;
+  max-width: 100%;
+  /*float: right;*/
 }

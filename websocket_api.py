@@ -27,11 +27,13 @@ def ws_api_generate(ws):
 
         with model.inference_session(max_length=max_length) as session:
             ws.send(json.dumps({"ok": True}))
+            
 
             while True:
                 request = json.loads(ws.receive(timeout=config.STEP_TIMEOUT))
                 assert request["type"] == "generate"
                 inputs = request.get("inputs")
+
                 logger.info(f"ws.generate.step(), inputs={repr(inputs)}")
 
                 if inputs is not None:
@@ -85,7 +87,18 @@ def ws_api_generate(ws):
                         token_count = len(delta_q + delta)
                         delta_q = []
                         logger.info(f"ws.generate.step(), all_outputs={repr(all_outputs)}, stop={stop}")
-                        ws.send(json.dumps({"ok": True, "outputs": outputs, "stop": stop, "token_count": token_count}))
+                        #HIVE START
+                        sessionlist = session._server_sessions
+                        route_map = {}
+                        for sid in sessionlist:
+                            block_range = str(sid.span.start) + ":" + str(sid.span.end)
+                            ip_addr = str(sid.span.server_info.public_name)
+                            peer_id = str(sid.span.peer_id)
+                            route_map[block_range] = ip_addr + " (..." + peer_id[-5:] +")"
+                            #logger.info(f"HIVE: PeerID = {sid.span.peer_id}; BLOCKS = {sid.span.start},{sid.span.end}")
+                        route_json = json.dumps(route_map)
+                        #HIVE END
+                        ws.send(json.dumps({"ok": True, "outputs": outputs, "stop": stop, "token_count": token_count, "route":route_json}))
     except flask_sock.ConnectionClosed:
         pass
     except Exception:

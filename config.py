@@ -1,3 +1,4 @@
+import os
 import torch
 from petals.constants import PUBLIC_INITIAL_PEERS
 
@@ -13,15 +14,6 @@ default_chat_config = ModelChatConfig(
 
 MODEL_FAMILIES = {
     "Llama 2": [
-        ModelConfig(
-            ModelBackendConfig(repository="petals-team/StableBeluga2", aliases=["stabilityai/StableBeluga2"]),
-            ModelFrontendConfig(
-                name="Stable Beluga 2 (70B)",
-                model_card="https://huggingface.co/stabilityai/StableBeluga2",
-                license="https://huggingface.co/stabilityai/StableBeluga2/blob/main/LICENSE.txt",
-            ),
-            default_chat_config,
-        ),
         ModelConfig(
             ModelBackendConfig(repository="meta-llama/Llama-2-70b-chat-hf"),
             ModelFrontendConfig(
@@ -48,47 +40,15 @@ MODEL_FAMILIES = {
                 generation_params=dict(do_sample=1, temperature=0.75, top_p=0.9, repetition_penalty=1.2),
             ),
         ),
-    ],
-    "Llama": [
-        ModelConfig(
-            ModelBackendConfig(repository="huggyllama/llama-65b", adapter="timdettmers/guanaco-65b"),
-            ModelFrontendConfig(
-                name="Guanaco-65B",
-                model_card="https://huggingface.co/timdettmers/guanaco-65b",
-                license="https://huggingface.co/timdettmers/guanaco-65b",
-            ),
-            default_chat_config,
-        ),
-        ModelConfig(
-            ModelBackendConfig(repository="huggyllama/llama-65b"),
-            ModelFrontendConfig(
-                name="Llama-65B",
-                model_card="https://github.com/facebookresearch/llama/blob/llama_v1/MODEL_CARD.md",
-                license="https://bit.ly/llama-license",
-            ),
-            default_chat_config,
-        ),
-    ],
-    "BLOOM": [
-        ModelConfig(
-            ModelBackendConfig(repository="bigscience/bloomz"),
-            ModelFrontendConfig(
-                name="BLOOMZ-176B",
-                model_card="https://huggingface.co/bigscience/bloomz",
-                license="https://bit.ly/bloom-license",
-            ),
-            ModelChatConfig(
-                max_session_length=2048,
-                sep_token="\n\n",
-                stop_token="</s>",
-                extra_stop_sequences=["\n\nHuman"],
-                generation_params=default_chat_config.generation_params,
-            ),
-        ),
-    ],
+    ],  
 }
-
-INITIAL_PEERS = PUBLIC_INITIAL_PEERS
+DEFAULT_MODEL_NAME = "meta-llama/Llama-2-70b-chat-hf"
+HF_ACCESS_TOKEN = "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"
+INITIAL_PEERS = []
+BOOTSTRAP_PEERS = os.environ['INITIAL_PEERS']
+if BOOTSTRAP_PEERS != "":
+    INITIAL_PEERS.append(BOOTSTRAP_PEERS)
+#INITIAL_PEERS = PUBLIC_INITIAL_PEERS
 # Set this to a list of multiaddrs to connect to a private swarm instead of the public one, for example:
 # INITIAL_PEERS = ['/ip4/10.1.2.3/tcp/31234/p2p/QmcXhze98AcgGQDDYna23s4Jho96n8wkwLJv78vxtFNq44']
 
