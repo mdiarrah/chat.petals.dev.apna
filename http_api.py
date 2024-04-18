@@ -103,6 +103,13 @@ def update_from_hiveDisk():
         model_name=EMBEDDING_MODEL_NAME,
         model_kwargs={"device": device_type},
     )
+    
+    logger.info(f"Creating DB directory...: {PERSIST_DIRECTORY}")
+    try:
+        os.makedirs(PERSIST_DIRECTORY)
+    except FileExistsError:
+    # directory already exists
+        pass
 
     db = Chroma.from_documents(
         texts,
@@ -143,7 +150,14 @@ def http_api_update_db():
         model_name=EMBEDDING_MODEL_NAME,
         model_kwargs={"device": device_type},
     )
-
+    
+    logger.info(f"Creating DB directory [UPDATE]...: {PERSIST_DIRECTORY}")
+    try:
+        os.makedirs(PERSIST_DIRECTORY)
+    except FileExistsError:
+    # directory already exists
+        pass
+    
     db = Chroma.from_documents(
         texts,
         embeddings,
