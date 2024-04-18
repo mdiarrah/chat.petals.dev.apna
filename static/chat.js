@@ -63,8 +63,6 @@ function sendReplica() {
         '<span class="generation-controls"><a class="stop-generation" href=#>stop generation</a></span>' +
         '<span class="suggest-join" style="display: none;">' +
           '<b>Too slow?</b> ' +
-          '<a target="_blank" href="https://github.com/bigscience-workshop/petals#connect-your-gpu-and-increase-petals-capacity">Connect your GPU</a> ' +
-          'and increase Petals capacity!' +
         '</span>' +
       '</p>'));
     animateLoading();
