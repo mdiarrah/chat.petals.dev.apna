@@ -23,23 +23,6 @@ MODEL_FAMILIES = {
             ),
             default_chat_config,
         ),
-    ],
-    "Falcon": [
-        ModelConfig(
-            ModelBackendConfig(repository="tiiuae/falcon-180B-chat", public_api=False),
-            ModelFrontendConfig(
-                name="Falcon 180B-Chat",
-                model_card="https://huggingface.co/tiiuae/falcon-180B-chat",
-                license="https://huggingface.co/spaces/tiiuae/falcon-180b-license/blob/main/LICENSE.txt",
-            ),
-            ModelChatConfig(
-                max_session_length=8192,
-                sep_token="\n",
-                stop_token="\n",
-                extra_stop_sequences=["<|endoftext|>", "\nFalcon:", " Falcon:", "\nUser:", " User:", "###"],
-                generation_params=dict(do_sample=1, temperature=0.75, top_p=0.9, repetition_penalty=1.2),
-            ),
-        ),
     ],  
 }
 DEFAULT_MODEL_NAME = "meta-llama/Llama-2-70b-chat-hf"
