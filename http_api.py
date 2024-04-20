@@ -1,3 +1,4 @@
+import logging
 import os
 from traceback import format_exc
 
@@ -65,6 +66,8 @@ from langchain.prompts import ChatPromptTemplate
 
 #Houssam
 import hivedisk_api
+# Add debug log for everything
+logging.basicConfig(level=logging.DEBUG)
 
 EMBEDDING_MODEL_NAME = "hkunlp/instructor-large"
 ROOT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
