@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import os
 from typing import Optional
 
 import torch
@@ -28,8 +29,14 @@ DEFAULT_MODEL_NAME = "huggyllama/llama-7b"
 
 #INITIAL_PEERS = PUBLIC_INITIAL_PEERS
 # Set this to a list of multiaddrs to connect to a private swarm instead of the public one, for example:
-INITIAL_PEERS = ['/ip4/51.79.102.103/tcp/31337/p2p/QmT3TtHZyKGHuXzgWaC5AXscQsFRrH9jJGU8PC4YJUwD5g']
-
+#INITIAL_PEERS = ['/ip4/51.79.102.103/tcp/31337/p2p/QmT3TtHZyKGHuXzgWaC5AXscQsFRrH9jJGU8PC4YJUwD5g']
+INITIAL_PEERS = []
+BOOTSTRAP_PEERS = os.environ['INITIAL_PEERS']
+if BOOTSTRAP_PEERS != "":
+    bootstrap_list = BOOTSTRAP_PEERS.split(",")
+    for peer in bootstrap_list:
+        if peer != "":
+            INITIAL_PEERS.append(BOOTSTRAP_PEERS)
 DEVICE = "cuda" #if torch.cuda.is_available() else "cpu"
 
 try:
