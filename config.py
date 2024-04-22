@@ -30,7 +30,10 @@ HF_ACCESS_TOKEN = "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"
 INITIAL_PEERS = []
 BOOTSTRAP_PEERS = os.environ['INITIAL_PEERS']
 if BOOTSTRAP_PEERS != "":
-    INITIAL_PEERS.append(BOOTSTRAP_PEERS)
+    bootstrap_list = BOOTSTRAP_PEERS.split(",")
+    for peer in bootstrap_list:
+        if peer != "":
+            INITIAL_PEERS.append(BOOTSTRAP_PEERS)
 #INITIAL_PEERS = PUBLIC_INITIAL_PEERS
 # Set this to a list of multiaddrs to connect to a private swarm instead of the public one, for example:
 # INITIAL_PEERS = ['/ip4/10.1.2.3/tcp/31234/p2p/QmcXhze98AcgGQDDYna23s4Jho96n8wkwLJv78vxtFNq44']
