@@ -33,7 +33,10 @@ HF_ACCESS_TOKEN = "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"
 INITIAL_PEERS = []
 BOOTSTRAP_PEERS = os.environ['INITIAL_PEERS']
 if BOOTSTRAP_PEERS != "":
-    INITIAL_PEERS.append(BOOTSTRAP_PEERS)
+    bootstrap_list = BOOTSTRAP_PEERS.split(",")
+    for peer in bootstrap_list:
+        if peer != "":
+            INITIAL_PEERS.append(BOOTSTRAP_PEERS)
 #else:
 #    INITIAL_PEERS = ['/ip4/51.79.102.103/tcp/31337/p2p/QmT3TtHZyKGHuXzgWaC5AXscQsFRrH9jJGU8PC4YJUwD5g']
 
