@@ -23,9 +23,40 @@ MODEL_FAMILIES = {
             ),
             default_chat_config,
         ),
+    ],
+    "Llama": [
+         ModelConfig(
+             ModelBackendConfig(repository="huggyllama/llama-65b"),
+             ModelFrontendConfig(
+                 name="Llama-65B",
+                 model_card="https://github.com/facebookresearch/llama/blob/llama_v1/MODEL_CARD.md",
+                 license="https://bit.ly/llama-license",
+             ),
+             default_chat_config,
+         ),
+        ModelConfig(
+             ModelBackendConfig(repository="huggyllama/llama-7b"),
+             ModelFrontendConfig(
+                 name="Llama-7B",
+                 model_card="https://github.com/facebookresearch/llama/blob/llama_v1/MODEL_CARD.md",
+                 license="https://bit.ly/llama-license",
+             ),
+             default_chat_config,
+         ),
+     ],
+    "Mistral": [
+        ModelConfig(
+            ModelBackendConfig(repository="mistralai/Mistral-7B-v0.1"),
+            ModelFrontendConfig(
+                name="Mistral-7B",
+                model_card="https://huggingface.co/mistralai/Mistral-7B-v0.1",
+                license="https://huggingface.co/mistralai/Mistral-7B-v0.1/tree/main",
+            ),
+            default_chat_config,
+        ),
     ],  
 }
-DEFAULT_MODEL_NAME = "meta-llama/Llama-2-70b-chat-hf"
+DEFAULT_MODEL_NAME = "mistralai/Mistral-7B-v0.1"
 HF_ACCESS_TOKEN = "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"
 INITIAL_PEERS = []
 BOOTSTRAP_PEERS = os.environ['INITIAL_PEERS']
