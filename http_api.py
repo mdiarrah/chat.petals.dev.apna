@@ -21,6 +21,8 @@ from chromadb.config import Settings
 # https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/excel.html?highlight=xlsx#microsoft-excel
 from langchain.document_loaders import CSVLoader, PDFMinerLoader, TextLoader, UnstructuredExcelLoader, Docx2txtLoader
 
+
+
 logger = hivemind.get_logger(__file__)
 ROOT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 # Define the folder for storing database
@@ -73,7 +75,7 @@ SOURCE_DIRECTORY = f"{ROOT_DIRECTORY}/SOURCE_DOCUMENTS/"
 PERSIST_DIRECTORY = f"{ROOT_DIRECTORY}/DB"
 
 # Default Instructor Model
-EMBEDDING_MODEL_NAME = "hkunlp/instructor-xl"#"hkunlp/instructor-large"
+#EMBEDDING_MODEL_NAME = "hkunlp/instructor-xl"#"hkunlp/instructor-large"
 # Houssam Import
 
 
@@ -99,15 +101,19 @@ def update_from_hiveDisk():
         model_name=EMBEDDING_MODEL_NAME,
         model_kwargs={"device": device_type},
     )
-
-    db = Chroma.from_documents(
+    try:
+        logger.info(f"Starting Chroma.from_documents")
+        db = Chroma.from_documents(
         texts,
         embeddings,
         persist_directory=PERSIST_DIRECTORY,
         client_settings=CHROMA_SETTINGS,
 
-    )
-    logger.info(f"Knowledge DB Updated with private Data !!")
+        )
+        logger.info(f"Knowledge DB Updated with private Data !!")
+    except Exception as e:
+        logger.exception("An error occurred while running Chroma.from_documents")
+        logger.info(f" Excption err: {e}")
     return "OK"
     
 
