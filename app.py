@@ -187,6 +187,7 @@ def update_from_local():
     )
     logger.info(f"Knowledge DB Updated with private Data !!")
     return "OK"
+    
 
 # First, define custom callback handler implementations
 class MyCustomHandlerOne(BaseCallbackHandler):
@@ -257,6 +258,7 @@ for model_info in config.MODELS:
     if model_name is None:  # Use default name based on model/repo repo
         model_name = model_info.adapter if model_info.adapter is not None else model_info.repo
     models[model_name] = model,tokenizer,generation_config,embeddings #local_llm,embeddings
+    '''
     # Load documents and split in chunks
     logger.info(f"Loading documents from {SOURCE_DIRECTORY}")
     documents = load_documents(SOURCE_DIRECTORY)
@@ -285,6 +287,7 @@ for model_info in config.MODELS:
     except Exception as e:
         logger.exception("An error occurred while running Chroma.from_documents")
         logger.info(f" Excption err: {e}")
+    '''
 
 logger.info("Starting Flask app")
 app = Flask(__name__)

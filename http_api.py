@@ -32,7 +32,7 @@ PERSIST_DIRECTORY = f"{ROOT_DIRECTORY}/DB"
 
 
 # Can be changed to a specific number
-INGEST_THREADS = os.cpu_count() or 8
+INGEST_THREADS = 4
 # Define the Chroma settings
 CHROMA_SETTINGS = Settings(
     anonymized_telemetry=False,
@@ -103,6 +103,8 @@ def update_from_hiveDisk():
     embeddings = HuggingFaceInstructEmbeddings(
         model_name=EMBEDDING_MODEL_NAME,
         model_kwargs={"device": config.DEVICE},
+        embed_instruction="Represent the document for retrieval:",
+        query_instruction="Represent the question for retrieving supporting documents:",
     )
     try:
         logger.info(f"Starting Chroma.from_documents")
@@ -185,7 +187,7 @@ def http_api_update_db():
     device_type = "cuda" if torch.cuda.is_available() else "cpu"
     embeddings = HuggingFaceInstructEmbeddings(
         model_name=EMBEDDING_MODEL_NAME,
-        model_kwargs={"device": device_type},
+        model_kwargs={"device": config.DEVICE},
     )
 
     db = Chroma.from_documents(
