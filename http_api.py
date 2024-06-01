@@ -65,6 +65,7 @@ import os
 import torch
 from langchain.embeddings import HuggingFaceInstructEmbeddings
 from langchain.prompts import ChatPromptTemplate
+from sentence_transformers import SentenceTransformer  # This replaces HuggingFaceInstructEmbeddings
 
 #Houssam
 import hivedisk_api
@@ -134,24 +135,23 @@ def update_from_source():
     logger.info(f"Split into {len(texts)} chunks of text")
 
     # Create embeddings
-    device_type = "cuda" if torch.cuda.is_available() else "cpu"
-    embeddings_model = HuggingFaceInstructEmbeddings(
-        model_name=EMBEDDING_MODEL_NAME,
-        model_kwargs={"device": device_type},
-    )
-    embeddings = [embeddings_model.embed(text) for text in texts]
-    embeddings = np.array(embeddings).astype('float32')
-
-    # Create a FAISS index
-    dimension = embeddings.shape[1]
-    index = faiss.IndexFlatL2(dimension)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model = SentenceTransformer(EMBEDDING_MODEL_NAME, device=device)
     
     try:
-        logger.info(f"Adding embeddings to the FAISS index")
+        logger.info("Generating embeddings for the documents")
+        embeddings = model.encode([text['content'] for text in texts], convert_to_tensor=True)
+        embeddings = embeddings.cpu().numpy().astype('float32')  # Convert to numpy and float32
+
+        # Create a FAISS index
+        dimension = embeddings.shape[1]
+        index = faiss.IndexFlatL2(dimension)
+        
+        logger.info("Adding embeddings to the FAISS index")
         index.add(embeddings)
         faiss.write_index(index, f"{PERSIST_DIRECTORY}/faiss_index.bin")
-        logger.info(f"Embeddings added to the FAISS index successfully")
-        logger.info(f"Knowledge DB Updated with private Data !!")
+        logger.info("Embeddings added to the FAISS index successfully")
+        logger.info("Knowledge DB Updated with private Data !!")
     except Exception as e:
         logger.exception("An error occurred while adding embeddings to the FAISS index")
         logger.info(f"Exception err: {e}")

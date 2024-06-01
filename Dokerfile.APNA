@@ -5,6 +5,7 @@ LABEL repository="petals"
 WORKDIR /home
 # Set en_US.UTF-8 locale by default
 RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment
+RUN pip install sentence-transformers
 
 COPY . chat.petals.dev/
 #COPY SOURCE_DOCUMENTS 
