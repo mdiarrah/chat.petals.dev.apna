@@ -80,12 +80,8 @@ EMBEDDING_MODEL_NAME = "hkunlp/instructor-large"
 
 @app.post("/api/v1/gethivedisk")
 def update_from_hiveDisk():
-    file_list = hivedisk_api.list_all_files()
-    logger.info(f"HiveDisk files List: {file_list}")
-    hivedisk_api.get_files(filelist=file_list,path=SOURCE_DIRECTORY)
-    logger.info(f"HiveDisk files Downloaded into: {SOURCE_DIRECTORY} !!")
     # Load documents and split in chunks
-    logger.info(f"Loading HiveDisk documents from {SOURCE_DIRECTORY}")
+    logger.info(f"Loading documents from {SOURCE_DIRECTORY}")
     documents = load_documents(SOURCE_DIRECTORY)
     text_documents, python_documents = split_documents(documents)
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
@@ -111,7 +107,7 @@ def update_from_hiveDisk():
         client_settings=CHROMA_SETTINGS,
 
     )
-    logger.info(f"Knowledge DB Updated with HiveDisk Data !!")
+    logger.info(f"Knowledge DB Updated with private Data !!")
     return "OK"
     
 
@@ -340,3 +336,34 @@ def split_documents(documents: list[Document]) -> tuple[list[Document], list[Doc
             text_docs.append(doc)
 
     return text_docs, python_docs
+
+def update_from_local():
+    # Load documents and split in chunks
+    logger.info(f"Loading documents from {SOURCE_DIRECTORY}")
+    documents = load_documents(SOURCE_DIRECTORY)
+    text_documents, python_documents = split_documents(documents)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+    python_splitter = RecursiveCharacterTextSplitter.from_language(
+        language=Language.PYTHON, chunk_size=880, chunk_overlap=200
+    )
+    texts = text_splitter.split_documents(text_documents)
+    texts.extend(python_splitter.split_documents(python_documents))
+    logger.info(f"Loaded {len(documents)} documents from {SOURCE_DIRECTORY}")
+    logger.info(f"Split into {len(texts)} chunks of text")
+
+    # Create embeddings
+    device_type = "cuda" if torch.cuda.is_available() else "cpu"
+    embeddings = HuggingFaceInstructEmbeddings(
+        model_name=EMBEDDING_MODEL_NAME,
+        model_kwargs={"device": device_type},
+    )
+
+    db = Chroma.from_documents(
+        texts,
+        embeddings,
+        persist_directory=PERSIST_DIRECTORY,
+        client_settings=CHROMA_SETTINGS,
+
+    )
+    logger.info(f"Knowledge DB Updated with private Data !!")
+    return "OK"
