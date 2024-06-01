@@ -7,6 +7,7 @@ WORKDIR /home
 RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment
 RUN pip install sentence-transformers
 RUN pip install langchain-chroma
+RUN pip install chromadb==0.4.3
 
 COPY . chat.petals.dev/
 VOLUME /home/chat.petals.dev/SOURCE_DOCUMENTS
