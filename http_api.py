@@ -108,6 +108,10 @@ def update_from_hiveDisk():
     )
     try:
         logger.info(f"Starting Chroma.from_documents")
+        db = Chroma(
+            persist_directory=PERSIST_DIRECTORY,
+            embedding_function=embeddings,
+        )
         db = Chroma.from_documents(
         texts,
         embeddings,
