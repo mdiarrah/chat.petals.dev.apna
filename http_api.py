@@ -20,7 +20,8 @@ from langchain.vectorstores import Chroma
 from chromadb.config import Settings
 # https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/excel.html?highlight=xlsx#microsoft-excel
 from langchain.document_loaders import CSVLoader, PDFMinerLoader, TextLoader, UnstructuredExcelLoader, Docx2txtLoader
-
+import numpy as np
+import faiss
 
 
 logger = hivemind.get_logger(__file__)
@@ -114,6 +115,46 @@ def update_from_hiveDisk():
     except Exception as e:
         logger.exception("An error occurred while running Chroma.from_documents")
         logger.info(f" Excption err: {e}")
+    return "OK"
+
+
+@app.post("/api/v1/getsource")
+def update_from_source():
+    # Load documents and split in chunks
+    logger.info(f"Loading documents from {SOURCE_DIRECTORY}")
+    documents = load_documents(SOURCE_DIRECTORY)
+    text_documents, python_documents = split_documents(documents)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+    python_splitter = RecursiveCharacterTextSplitter.from_language(
+        language=Language.PYTHON, chunk_size=880, chunk_overlap=200
+    )
+    texts = text_splitter.split_documents(text_documents)
+    texts.extend(python_splitter.split_documents(python_documents))
+    logger.info(f"Loaded {len(documents)} documents from {SOURCE_DIRECTORY}")
+    logger.info(f"Split into {len(texts)} chunks of text")
+
+    # Create embeddings
+    device_type = "cuda" if torch.cuda.is_available() else "cpu"
+    embeddings_model = HuggingFaceInstructEmbeddings(
+        model_name=EMBEDDING_MODEL_NAME,
+        model_kwargs={"device": device_type},
+    )
+    embeddings = [embeddings_model.embed(text) for text in texts]
+    embeddings = np.array(embeddings).astype('float32')
+
+    # Create a FAISS index
+    dimension = embeddings.shape[1]
+    index = faiss.IndexFlatL2(dimension)
+    
+    try:
+        logger.info(f"Adding embeddings to the FAISS index")
+        index.add(embeddings)
+        faiss.write_index(index, f"{PERSIST_DIRECTORY}/faiss_index.bin")
+        logger.info(f"Embeddings added to the FAISS index successfully")
+        logger.info(f"Knowledge DB Updated with private Data !!")
+    except Exception as e:
+        logger.exception("An error occurred while adding embeddings to the FAISS index")
+        logger.info(f"Exception err: {e}")
     return "OK"
     
 
