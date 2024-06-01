@@ -16,7 +16,7 @@ import torch
 from langchain.docstore.document import Document
 from langchain.embeddings import HuggingFaceInstructEmbeddings
 from langchain.text_splitter import Language, RecursiveCharacterTextSplitter
-from langchain.vectorstores import Chroma
+from langchain_chroma import Chroma
 from chromadb.config import Settings
 # https://python.langchain.com/en/latest/modules/indexes/document_loaders/examples/excel.html?highlight=xlsx#microsoft-excel
 from langchain.document_loaders import CSVLoader, PDFMinerLoader, TextLoader, UnstructuredExcelLoader, Docx2txtLoader
@@ -28,7 +28,7 @@ logger = hivemind.get_logger(__file__)
 ROOT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 # Define the folder for storing database
 SOURCE_DIRECTORY = f"{ROOT_DIRECTORY}/SOURCE_DOCUMENTS"
-PERSIST_DIRECTORY = f"{ROOT_DIRECTORY}/DB2"
+PERSIST_DIRECTORY = f"{ROOT_DIRECTORY}/DB"
 
 
 # Can be changed to a specific number
@@ -36,7 +36,7 @@ INGEST_THREADS = os.cpu_count() or 8
 # Define the Chroma settings
 CHROMA_SETTINGS = Settings(
     anonymized_telemetry=False,
-    is_persistent=False,
+    is_persistent=True,
 )
 DOCUMENT_MAP = {
     ".txt": TextLoader,
@@ -70,12 +70,12 @@ from sentence_transformers import SentenceTransformer  # This replaces HuggingFa
 #Houssam
 import hivedisk_api
 
-EMBEDDING_MODEL_NAME_2 = "hkunlp/instructor-large" #"paraphrase-MiniLM-L6-v2" #"hkunlp/instructor-large"
-EMBEDDING_MODEL_NAME = "paraphrase-MiniLM-L6-v2" #"hkunlp/instructor-large"
+EMBEDDING_MODEL_NAME = "hkunlp/instructor-large" #"paraphrase-MiniLM-L6-v2" #"hkunlp/instructor-large"
+#EMBEDDING_MODEL_NAME = "paraphrase-MiniLM-L6-v2" #"hkunlp/instructor-large"
 ROOT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 # Define the folder for storing database
 SOURCE_DIRECTORY = f"{ROOT_DIRECTORY}/SOURCE_DOCUMENTS/"
-PERSIST_DIRECTORY = f"{ROOT_DIRECTORY}/DB2"
+PERSIST_DIRECTORY = f"{ROOT_DIRECTORY}/DB"
 
 # Default Instructor Model
 #EMBEDDING_MODEL_NAME = "hkunlp/instructor-xl"#"hkunlp/instructor-large"
@@ -101,7 +101,7 @@ def update_from_hiveDisk():
     # Create embeddings
     device_type = "cuda" if torch.cuda.is_available() else "cpu"
     embeddings = HuggingFaceInstructEmbeddings(
-        model_name=EMBEDDING_MODEL_NAME_2,
+        model_name=EMBEDDING_MODEL_NAME,
         model_kwargs={"device": config.DEVICE},
     )
     try:
