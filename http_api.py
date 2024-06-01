@@ -94,7 +94,8 @@ def update_from_hiveDisk():
     logger.info(f"Split into {len(texts)} chunks of text")
 
     # Create embeddings
-    device_type = "cuda" if torch.cuda.is_available() else "cpu"
+    #device_type = "cuda" if torch.cuda.is_available() else "cpu"
+    device_type = "cpu"
     embeddings = HuggingFaceInstructEmbeddings(
         model_name=EMBEDDING_MODEL_NAME,
         model_kwargs={"device": device_type},
