@@ -73,7 +73,7 @@ SOURCE_DIRECTORY = f"{ROOT_DIRECTORY}/SOURCE_DOCUMENTS/"
 PERSIST_DIRECTORY = f"{ROOT_DIRECTORY}/DB"
 
 # Default Instructor Model
-EMBEDDING_MODEL_NAME = "hkunlp/instructor-large"
+EMBEDDING_MODEL_NAME = "hkunlp/instructor-xl"#"hkunlp/instructor-large"
 # Houssam Import
 
 
