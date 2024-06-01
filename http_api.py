@@ -70,7 +70,7 @@ from sentence_transformers import SentenceTransformer  # This replaces HuggingFa
 #Houssam
 import hivedisk_api
 
-EMBEDDING_MODEL_NAME = "hkunlp/instructor-large"
+EMBEDDING_MODEL_NAME = "paraphrase-MiniLM-L6-v2" #"hkunlp/instructor-large"
 ROOT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 # Define the folder for storing database
 SOURCE_DIRECTORY = f"{ROOT_DIRECTORY}/SOURCE_DOCUMENTS/"
@@ -136,11 +136,11 @@ def update_from_source():
 
     # Create embeddings
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    model = SentenceTransformer(EMBEDDING_MODEL_NAME, device=device)
+    model = SentenceTransformer(EMBEDDING_MODEL_NAME)
     
     try:
         logger.info("Generating embeddings for the documents")
-        embeddings = model.encode([text['content'] for text in texts], convert_to_tensor=True)
+        embeddings = model.encode([text['content'] for text in texts], convert_to_tensor=True, device=device)
         embeddings = embeddings.cpu().numpy().astype('float32')  # Convert to numpy and float32
 
         # Create a FAISS index
