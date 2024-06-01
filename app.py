@@ -18,7 +18,7 @@ from langchain.embeddings import HuggingFaceInstructEmbeddings
 from langchain.llms import HuggingFacePipeline, LlamaCpp
 from langchain.memory import ConversationBufferMemory
 from langchain.prompts import PromptTemplate
-from langchain_chroma import Chroma
+from langchain.vectorstores import Chroma
 import os
 import torch
 from langchain.embeddings import HuggingFaceInstructEmbeddings
