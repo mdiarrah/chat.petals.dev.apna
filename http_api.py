@@ -36,7 +36,7 @@ INGEST_THREADS = os.cpu_count() or 8
 # Define the Chroma settings
 CHROMA_SETTINGS = Settings(
     anonymized_telemetry=False,
-    is_persistent=True,
+    is_persistent=False,
 )
 DOCUMENT_MAP = {
     ".txt": TextLoader,
@@ -75,7 +75,7 @@ EMBEDDING_MODEL_NAME = "paraphrase-MiniLM-L6-v2" #"hkunlp/instructor-large"
 ROOT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 # Define the folder for storing database
 SOURCE_DIRECTORY = f"{ROOT_DIRECTORY}/SOURCE_DOCUMENTS/"
-PERSIST_DIRECTORY = f"{ROOT_DIRECTORY}/DB"
+PERSIST_DIRECTORY = f"{ROOT_DIRECTORY}/DB2"
 
 # Default Instructor Model
 #EMBEDDING_MODEL_NAME = "hkunlp/instructor-xl"#"hkunlp/instructor-large"
@@ -102,7 +102,7 @@ def update_from_hiveDisk():
     device_type = "cuda" if torch.cuda.is_available() else "cpu"
     embeddings = HuggingFaceInstructEmbeddings(
         model_name=EMBEDDING_MODEL_NAME_2,
-        model_kwargs={"device": device_type},
+        model_kwargs={"device": config.DEVICE},
     )
     try:
         logger.info(f"Starting Chroma.from_documents")

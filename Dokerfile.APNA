@@ -11,7 +11,7 @@ COPY . chat.petals.dev/
 VOLUME /home/chat.petals.dev/SOURCE_DOCUMENTS
 #COPY SOURCE_DOCUMENTS 
 WORKDIR /home/chat.petals.dev
-#RUN mkdir -p SOURCE_DOCUMENTS
+RUN mkdir -p DB2
 #RUN pip install -r requirements.dell.txt
 
 #CMD ["flask", "run","--host","0.0.0.0","--port","8989"]
