@@ -28,7 +28,7 @@ logger = hivemind.get_logger(__file__)
 ROOT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 # Define the folder for storing database
 SOURCE_DIRECTORY = f"{ROOT_DIRECTORY}/SOURCE_DOCUMENTS"
-PERSIST_DIRECTORY = f"{ROOT_DIRECTORY}/DB"
+PERSIST_DIRECTORY = f"{ROOT_DIRECTORY}/DB2"
 
 
 # Can be changed to a specific number
@@ -70,6 +70,7 @@ from sentence_transformers import SentenceTransformer  # This replaces HuggingFa
 #Houssam
 import hivedisk_api
 
+EMBEDDING_MODEL_NAME_2 = "hkunlp/instructor-large" #"paraphrase-MiniLM-L6-v2" #"hkunlp/instructor-large"
 EMBEDDING_MODEL_NAME = "paraphrase-MiniLM-L6-v2" #"hkunlp/instructor-large"
 ROOT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 # Define the folder for storing database
@@ -100,7 +101,7 @@ def update_from_hiveDisk():
     # Create embeddings
     device_type = "cuda" if torch.cuda.is_available() else "cpu"
     embeddings = HuggingFaceInstructEmbeddings(
-        model_name=EMBEDDING_MODEL_NAME,
+        model_name=EMBEDDING_MODEL_NAME_2,
         model_kwargs={"device": device_type},
     )
     try:

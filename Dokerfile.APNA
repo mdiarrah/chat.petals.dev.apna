@@ -8,6 +8,7 @@ RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment
 RUN pip install sentence-transformers
 
 COPY . chat.petals.dev/
+VOLUME /home/chat.petals.dev/SOURCE_DOCUMENTS
 #COPY SOURCE_DOCUMENTS 
 WORKDIR /home/chat.petals.dev
 #RUN mkdir -p SOURCE_DOCUMENTS
